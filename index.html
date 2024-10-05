@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Кликер с уровнями, магазином и лидербордом</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: space-between;
+            height: 100vh;
+            margin: 0;
+            background-color: #0a0a23;
+        }
+
+        /* Счетчик коинов сверху */
+        #counter-container {
+            display: flex;
+            align-items: center;
+            margin-top: 20px;
+        }
+
+        #coinImage {
+            width: 50px;
+            height: auto;
+            margin-right: 10px;
+        }
+
+        #counter {
+            font-size: 3em;
+            color: white;
+        }
+
+        /* Основное меню для фарма */
+        .menu {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            flex-grow: 1;
+        }
+
+        #farm-container {
+            display: flex;
+        }
+
+        /* Изображение для кликов */
+        #clickImage {
+            cursor: pointer;
+            width: 250px;
+            height: auto;
+            transition: transform 0.1s ease-in-out;
+            outline: none;
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        #clickImage:active {
+            transform: scale(0.95);
+        }
+
+        #level {
+            font-size: 2em;
+            color: #FFD700;
+            margin-top: 10px;
+        }
+
+        /* Нижнее меню */
+        #menu-container {
+            position: fixed;
+            bottom: 20px;
+            display: flex;
+            justify-content: center;
+            width: 100%;
+            padding: 10px;
+        }
+
+        .menu-button {
+            width: 60px;
+            height: 60px;
+            background-color: #202053;
+            border-radius: 50%;
+            margin: 0 10px;
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            transition: transform 0.2s ease-in-out;
+            outline: none;
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
+            border: none;
+        }
+
+        .menu-button:active {
+            background-color: #3a3a6f;
+        }
+
+        .menu-button img {
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+        }
+
+        /* Лидерборд */
+        #leaderboard-container {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background-color: rgba(255, 255, 255, 0.9);
+            padding: 20px;
+            border-radius: 10px;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        #leaderboard {
+            font-size: 1.2em;
+            color: black;
+            margin-bottom: 20px;
+        }
+
+        #leaderboard ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        #leaderboard li {
+            margin: 5px 0;
+        }
+
+        #leaderboard-button {
+            font-size: 1em;
+            padding: 10px;
+            background-color: #202053;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        /* Boost текст */
+        .boost {
+            position: absolute;
+            bottom: 120px;
+            font-size: 20px;
+            color: #f5a623;
+            text-align: center;
+        }
+
+        @media (max-width: 768px) {
+            .menu-button {
+                width: 50px;
+                height: 50px;
+            }
+
+            .menu-button img {
+                width: 30px;
+                height: 30px;
+            }
+
+            #counter {
+                font-size: 2.5em;
+            }
+
+            #level {
+                font-size: 1.8em;
+            }
+        }
+
+    </style>
+</head>
+<body>
+
+    <!-- Счетчик коинов -->
+    <div id="counter-container">
+        <img id="coinImage" src="coin.png" alt="Коин">
+        <div id="counter">0</div>
+    </div>
+
+    <!-- Основное меню для фарма коинов -->
+    <div id="farm-container" class="menu">
+        <img id="clickImage" src="your-tap-image.png" alt="Кликни сюда">
+        <div id="level">Level: 1</div>
+        <button id="saveScoreButton">Сохранить результат</button>
+    </div>
+
+    <!-- Меню магазина -->
+    <div id="shop-container" class="menu">
+        <h2>Магазин</h2>
+        <p>Купите автокликер за 150,000 коинов</p>
+        <button id="buyAutoClickerButton">Купить Автокликер</button>
+    </div>
+
+    <!-- Меню буста -->
+    <div id="boost-container" class="menu">
+        <h2>Boost</h2>
+        <p>Активируйте boost на 1 минуту для увеличения коинов за клик!</p>
+        <button id="activateBoostButton">Активировать Boost</button>
+        <p>Купите +1 коин за клик (максимум до 10 коинов за клик)</p>
+        <button id="buyClickUpgradeButton">Купить улучшение клика</button>
+    </div>
+
+    <!-- Нижнее меню -->
+    <div id="menu-container">
+        <div class="menu-button" id="farmMenuButton">
+            <img src="coin-icon.png" alt="Фарм">
+        </div>
+        <div class="menu-button" id="shopMenuButton">
+            <img src="shop-icon.png" alt="Магазин">
+        </div>
+        <div class="menu-button" id="boostMenuButton">
+            <img src="boost-icon.png" alt="Буст">
+        </div>
+        <div class="menu-button" id="leaderboardButton">
+            <img src="leaderboard-icon.png" alt="Лидерборд">
+        </div>
+    </div>
+
+    <!-- Лидерборд -->
+    <div id="leaderboard-container">
+        <h2>Лидерборд</h2>
+        <div id="leaderboard">
+            <ul id="leaderboardList"></ul>
+        </div>
+        <button id="closeLeaderboardButton">Закрыть</button>
+    </div>
+
+    <script>
+        const counterDisplay = document.getElementById('counter');
+        const clickImage = document.getElementById('clickImage');
+        const farmContainer = document.getElementById('farm-container');
+        const shopContainer = document.getElementById('shop-container');
+        const boostContainer = document.getElementById('boost-container');
+        const leaderboardContainer = document.getElementById('leaderboard-container');
+        const leaderboardList = document.getElementById('leaderboardList');
+        const farmMenuButton = document.getElementById('farmMenuButton');
+        const shopMenuButton = document.getElementById('shopMenuButton');
+        const boostMenuButton = document.getElementById('boostMenuButton');
+        const leaderboardButton = document.getElementById('leaderboardButton');
+        const closeLeaderboardButton = document.getElementById('closeLeaderboardButton');
+        const saveScoreButton = document.getElementById('saveScoreButton');
+        const buyAutoClickerButton = document.getElementById('buyAutoClickerButton');
+        const activateBoostButton = document.getElementById('activateBoostButton');
+        const buyClickUpgradeButton = document.getElementById('buyClickUpgradeButton');
+
+        let count = localStorage.getItem('coinCount') ? parseInt(localStorage.getItem('coinCount')) : 0;
+        let coinsPerClick = localStorage.getItem('coinsPerClick') ? parseInt(localStorage.getItem('coinsPerClick')) : 1;
+        let autoClickerActive = localStorage.getItem('autoClickerActive') === 'true' ? true : false;
+        let boostActive = false;
+        let level = localStorage.getItem('level') ? parseInt(localStorage.getItem('level')) : 1;
+        let autoClickerTimeout;
+        let clickUpgradeCost = 100000;
+
+        counterDisplay.textContent = count;
+
+        // Логика фарма коинов
+        clickImage.addEventListener('click', function () {
+            let currentCoins = boostActive ? coinsPerClick * 3 : coinsPerClick;
+            count += currentCoins;
+            counterDisplay.textContent = count;
+            localStorage.setItem('coinCount', count);
+        });
+
+        // Логика переключения между разделами
+        farmMenuButton.addEventListener('click', function () {
+            showMenu(farmContainer);
+        });
+
+        shopMenuButton.addEventListener('click', function () {
+            showMenu(shopContainer);
+        });
+
+        boostMenuButton.addEventListener('click', function () {
+            showMenu(boostContainer);
+        });
+
+        leaderboardButton.addEventListener('click', function () {
+            leaderboardContainer.style.display = 'flex';
+            loadLeaderboard();
+        });
+
+        closeLeaderboardButton.addEventListener('click', function () {
+            leaderboardContainer.style.display = 'none';
+        });
+
+        // Функция для переключения видимых меню
+        function showMenu(menu) {
+            farmContainer.style.display = 'none';
+            shopContainer.style.display = 'none';
+            boostContainer.style.display = 'none';
+
+            menu.style.display = 'flex'; // Показываем выбранное меню
+        }
+
+        // Покупка автокликера
+        buyAutoClickerButton.addEventListener('click', function () {
+            if (count >= 150000 && !autoClickerActive) {
+                count -= 150000;
+                localStorage.setItem('coinCount', count);
+                autoClickerActive = true;
+                localStorage.setItem('autoClickerActive', 'true');
+                startAutoClicker();
+            }
+        });
+
+        function startAutoClicker() {
+            autoClickerTimeout = setInterval(function () {
+                count += 1;
+                counterDisplay.textContent = count;
+                localStorage.setItem('coinCount', count);
+            }, 2000);
+
+            // Автокликер работает 3 часа
+            setTimeout(function () {
+                clearInterval(autoClickerTimeout);
+                autoClickerActive = false;
+                localStorage.setItem('autoClickerActive', 'false');
+            }, 3 * 60 * 60 * 1000);
+        }
+
+        if (autoClickerActive) {
+            startAutoClicker();
+        }
+
+        // Активировать буст
+        activateBoostButton.addEventListener('click', function () {
+            if (!boostActive) {
+                boostActive = true;
+                setTimeout(function () {
+                    boostActive = false;
+                }, 60000); // Буст активен 1 минуту
+            }
+        });
+
+        // Покупка +1 клик
+        buyClickUpgradeButton.addEventListener('click', function () {
+            if (count >= clickUpgradeCost && coinsPerClick < 10) {
+                count -= clickUpgradeCost;
+                coinsPerClick += 1;
+                clickUpgradeCost += 100000; // Увеличиваем стоимость улучшения
+                localStorage.setItem('coinCount', count);
+                localStorage.setItem('coinsPerClick', coinsPerClick);
+            }
+        });
+
+        // Сохранение результата в таблицу лидеров
+        saveScoreButton.addEventListener('click', function () {
+            let playerName = prompt("Введите ваше имя:");
+            if (playerName) {
+                saveScore(playerName, count);
+                alert("Результат сохранён!");
+            }
+        });
+
+        // Функция сохранения результата
+        function saveScore(playerName, score) {
+            let leaderboard = JSON.parse(localStorage.getItem('leaderboard')) || [];
+            leaderboard.push({ name: playerName, score: score });
+            leaderboard.sort((a, b) => b.score - a.score); // Сортировка по убыванию
+            if (leaderboard.length > 10) leaderboard.pop(); // Лидерборд на 10 мест
+            localStorage.setItem('leaderboard', JSON.stringify(leaderboard));
+        }
+
+        // Функция загрузки лидерборда
+        function loadLeaderboard() {
+            leaderboardList.innerHTML = '';
+            let leaderboard = JSON.parse(localStorage.getItem('leaderboard')) || [];
+            leaderboard.forEach((entry, index) => {
+                let li = document.createElement('li');
+                li.textContent = `${index + 1}. ${entry.name}: ${entry.score} коинов`;
+                leaderboardList.appendChild(li);
+            });
+        }
+
+        // Показываем фарм-меню по умолчанию при загрузке
+        showMenu(farmContainer);
+    </script>
+
+</body>
+</html>
