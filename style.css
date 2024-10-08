@@ -1,0 +1,45 @@
+body {
+    font-family: Arial, sans-serif;
+    background-color: #ff69b4; /* Розовый фон */
+    color: #333;
+    height: 100vh; /* Высота экрана */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 0; /* Убираем отступы по умолчанию */
+}
+
+.container {
+    text-align: center;
+}
+
+.birthday-message {
+    font-size: 36px;
+    font-weight: bold;
+    color: white; /* Белый цвет текста */
+    margin-bottom: 20px;
+}
+
+button {
+    padding: 10px 20px;
+    font-size: 16px;
+    cursor: pointer;
+    background-color: #ff1493; /* Тёмно-розовый фон для кнопки */
+    color: white; /* Белый цвет текста кнопки */
+    border: none;
+    border-radius: 5px;
+}
+
+button:hover {
+    background-color: #c71585; /* Более тёмный розовый при наведении */
+}
+
+.hidden {
+    display: none;
+}
+
+img {
+    margin-top: 20px;
+    max-width: 100%;
+    height: auto;
+}
